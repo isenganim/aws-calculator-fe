@@ -1,4 +1,4 @@
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Cpu, HardDrive, Server } from 'lucide-react';
 import type { EC2CalculateResponse, RDSCalculateResponse } from '../types/api';
 
 interface CostBreakdownCardProps {
@@ -42,6 +42,107 @@ export function CostBreakdownCard({ result, service }: CostBreakdownCardProps) {
           </div>
         </div>
       </div>
+
+      {isEC2 && ec2Result && (
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Server className="w-4 h-4" />
+            Instance Specifications
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Instance Type</span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {ec2Result.breakdown.compute.instanceType}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                <Cpu className="w-3 h-3" /> vCPU
+              </span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {ec2Result.breakdown.compute.vcpu}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Memory</span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {ec2Result.breakdown.compute.memoryGB} GB
+              </span>
+            </div>
+            {ec2Result.breakdown.storage.volumes.length > 0 && (
+              <>
+                <div className="pt-3 border-t border-gray-200 dark:border-gray-800">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1">
+                    <HardDrive className="w-3 h-3" /> Storage Volumes
+                  </span>
+                </div>
+                {ec2Result.breakdown.storage.volumes.map((volume, index) => (
+                  <div key={index} className="pl-4 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {volume.type.toUpperCase()} - {volume.sizeGB} GB
+                      </span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {volume.iops && `${volume.iops} IOPS`}
+                        {volume.throughputMBps && ` / ${volume.throughputMBps} MB/s`}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {!isEC2 && rdsResult && (
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Server className="w-4 h-4" />
+            Instance Specifications
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Instance Type</span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {rdsResult.breakdown.compute.instanceType}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                <Cpu className="w-3 h-3" /> vCPU
+              </span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {rdsResult.breakdown.compute.vcpu}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Memory</span>
+              <span className="font-medium text-gray-900 dark:text-white">
+                {rdsResult.breakdown.compute.memoryGB} GB
+              </span>
+            </div>
+            <div className="pt-3 border-t border-gray-200 dark:border-gray-800">
+              <span className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-1">
+                <HardDrive className="w-3 h-3" /> Storage
+              </span>
+            </div>
+            <div className="pl-4 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 dark:text-gray-400">
+                  {rdsResult.breakdown.storage.type.toUpperCase()} - {rdsResult.breakdown.storage.allocatedGB} GB
+                </span>
+                {rdsResult.breakdown.storage.iops && (
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {rdsResult.breakdown.storage.iops} IOPS
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-5">
         <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Cost Breakdown</h3>
