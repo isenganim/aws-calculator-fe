@@ -28,6 +28,7 @@ export function SnapshotCalculator() {
   const calculateCost = async () => {
     setLoading(true);
     setError(null);
+    setResult(null);
 
     try {
       const response = await awsApiClient.calculateSnapshots(
@@ -40,12 +41,15 @@ export function SnapshotCalculator() {
         compressionFactor
       );
 
+      console.log('Snapshot API response:', response);
+
       if (response.success && response.data) {
         setResult(response.data);
       } else {
-        setError(response.error?.message || 'Failed to calculate costs');
+        setError(response.error?.message || `API returned success: ${response.success}. Check console for details.`);
       }
     } catch (err) {
+      console.error('Snapshot calculation error:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -207,10 +211,10 @@ export function SnapshotCalculator() {
             <>
               <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-6 text-white">
                 <h3 className="text-sm font-medium opacity-90 mb-2">Estimated Monthly Cost</h3>
-                <p className="text-4xl font-bold">{formatCurrency(result.monthlyCost)}</p>
+                <p className="text-4xl font-bold">{formatCurrency(result.summary.monthly)}</p>
                 <div className="mt-4 pt-4 border-t border-white/20">
                   <p className="text-sm opacity-90">Annual Projection</p>
-                  <p className="text-2xl font-semibold">{formatCurrency(result.monthlyCost * 12)}</p>
+                  <p className="text-2xl font-semibold">{formatCurrency(result.summary.yearly)}</p>
                 </div>
               </div>
 
@@ -218,21 +222,21 @@ export function SnapshotCalculator() {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Storage Breakdown</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200 dark:border-gray-800">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Initial Snapshot</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">First Snapshot</span>
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {result.breakdown.initialSnapshot.toFixed(2)} GB
+                      {result.breakdown.firstSnapshot.sizeGB.toFixed(2)} GB ({formatCurrency(result.breakdown.firstSnapshot.monthly)}/mo)
                     </span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200 dark:border-gray-800">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Incremental Snapshots</span>
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {result.breakdown.incrementalSnapshots.toFixed(2)} GB
+                      {result.breakdown.incrementalSnapshots.totalSizeGB.toFixed(2)} GB ({formatCurrency(result.breakdown.incrementalSnapshots.monthly)}/mo)
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-sm font-medium text-gray-900 dark:text-white">Total Storage</span>
                     <span className="font-bold text-lg text-gray-900 dark:text-white">
-                      {result.breakdown.totalStorageGB.toFixed(2)} GB
+                      {result.breakdown.total.sizeGB.toFixed(2)} GB
                     </span>
                   </div>
                 </div>
@@ -260,6 +264,10 @@ export function SnapshotCalculator() {
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Storage Type:</span>
                     <span className="font-medium text-gray-900 dark:text-white capitalize">{storageType}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Price per GB:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(result.pricing.pricePerGBMonth)}/GB/mo</span>
                   </div>
                 </div>
               </div>

@@ -114,11 +114,15 @@ class AWSApiClient {
       dailyChangePercent: dailyChangePercent.toString(),
       retentionDays: retentionDays.toString(),
       storageType,
-      ...(compressionFactor && { compressionFactor: compressionFactor.toString() }),
     });
 
+    if (compressionFactor !== undefined) {
+      params.append('compressionFactor', compressionFactor.toString());
+    }
+
     return this.request<SnapshotCalculateResponse>(
-      `/api/v1/pricing/snapshots/calculate?${params.toString()}`
+      `/api/v1/pricing/snapshots/calculate?${params.toString()}`,
+      { method: 'GET' }
     );
   }
 

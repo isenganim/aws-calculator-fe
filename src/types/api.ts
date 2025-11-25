@@ -191,14 +191,29 @@ export interface RDSCalculateResponse {
 }
 
 export interface SnapshotCalculateResponse {
-  region: string;
-  volumeSizeGB: number;
-  estimatedStorageGB: number;
-  monthlyCost: number;
+  summary: {
+    hourly: number;
+    monthly: number;
+    yearly: number;
+  };
   breakdown: {
-    initialSnapshot: number;
-    incrementalSnapshots: number;
-    totalStorageGB: number;
+    firstSnapshot: {
+      sizeGB: number;
+      monthly: number;
+    };
+    incrementalSnapshots: {
+      dailyChangeGB: number;
+      totalSizeGB: number;
+      monthly: number;
+    };
+    total: {
+      sizeGB: number;
+      monthly: number;
+    };
+  };
+  pricing: {
+    pricePerGBMonth: number;
+    storageType: string;
   };
 }
 
@@ -214,26 +229,30 @@ export interface ReservedInstanceCompareRequest {
 export interface ReservedInstanceOption {
   term: string;
   paymentOption: string;
+  hourlyRate: number;
   upfrontCost: number;
-  monthlyCost: number;
-  totalCost: number;
-  savings: number;
-  savingsPercent: number;
+  effectiveMonthly: number;
+  effectiveYearly: number;
+  savings: {
+    monthly: number;
+    yearly: number;
+    percentageVsOnDemand: number;
+  };
 }
 
 export interface ReservedInstanceCompareResponse {
-  region: string;
-  service: string;
   instanceType: string;
+  region: string;
   quantity: number;
-  onDemand: {
-    hourlyRate: number;
-    monthlyCost: number;
-    annualCost: number;
-    threeYearCost: number;
+  comparison: {
+    onDemand: {
+      hourlyRate: number;
+      monthlyRate: number;
+      yearlyRate: number;
+    };
+    reserved: ReservedInstanceOption[];
   };
-  reserved: ReservedInstanceOption[];
-  recommendation: string;
+  recommendation?: string;
 }
 
 export interface MultiRegionCompareRequest {

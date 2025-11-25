@@ -172,19 +172,19 @@ export function ReservedInstanceComparison() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm opacity-90">Hourly</p>
-                <p className="text-2xl font-bold">{formatCurrency(result.onDemand.hourlyRate)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(result.comparison.onDemand.hourlyRate)}</p>
               </div>
               <div>
                 <p className="text-sm opacity-90">Monthly</p>
-                <p className="text-2xl font-bold">{formatCurrency(result.onDemand.monthlyCost)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(result.comparison.onDemand.monthlyRate)}</p>
               </div>
               <div>
                 <p className="text-sm opacity-90">Annual</p>
-                <p className="text-2xl font-bold">{formatCurrency(result.onDemand.annualCost)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(result.comparison.onDemand.yearlyRate)}</p>
               </div>
               <div>
                 <p className="text-sm opacity-90">3-Year Total</p>
-                <p className="text-2xl font-bold">{formatCurrency(result.onDemand.threeYearCost)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(result.comparison.onDemand.yearlyRate * 3)}</p>
               </div>
             </div>
           </div>
@@ -202,29 +202,29 @@ export function ReservedInstanceComparison() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">Payment</th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">Upfront</th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">Monthly</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">Total Cost</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">Yearly</th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 dark:text-gray-300 uppercase">Savings</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                  {result.reserved.map((option, index) => (
-                    <tr key={index} className="hover:bg-gray-50 dark:bg-gray-900">
+                  {result.comparison.reserved.map((option, index) => (
+                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{option.term}</td>
                       <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{option.paymentOption}</td>
                       <td className="px-6 py-4 text-sm text-gray-900 dark:text-white text-right">
                         {formatCurrency(option.upfrontCost)}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900 dark:text-white text-right">
-                        {formatCurrency(option.monthlyCost)}
+                        {formatCurrency(option.effectiveMonthly)}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white text-right">
-                        {formatCurrency(option.totalCost)}
+                        {formatCurrency(option.effectiveYearly)}
                       </td>
                       <td className="px-6 py-4 text-sm text-right">
                         <div className="flex items-center justify-end gap-2">
                           <TrendingDown className="w-4 h-4 text-green-600" />
                           <span className="font-semibold text-green-600">
-                            {formatCurrency(option.savings)} ({option.savingsPercent.toFixed(1)}%)
+                            {formatCurrency(option.savings.yearly)}/yr ({option.savings.percentageVsOnDemand.toFixed(1)}%)
                           </span>
                         </div>
                       </td>
@@ -236,9 +236,9 @@ export function ReservedInstanceComparison() {
           </div>
 
           {result.recommendation && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">Recommendation</h3>
-              <p className="text-blue-800">{result.recommendation}</p>
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">Recommendation</h3>
+              <p className="text-blue-800 dark:text-blue-200">{result.recommendation}</p>
             </div>
           )}
         </div>
