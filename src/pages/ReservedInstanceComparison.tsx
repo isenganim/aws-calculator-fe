@@ -167,7 +167,7 @@ export function ReservedInstanceComparison() {
 
       {result && (
         <div className="space-y-6">
-          <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-xl p-6 text-white">
+          <div className="bg-blue-600 rounded-xl p-6 text-white">
             <h3 className="text-lg font-medium mb-4">On-Demand Pricing</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
