@@ -14,7 +14,6 @@ import {
   Globe,
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { HealthIndicator } from './HealthIndicator';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -90,8 +89,7 @@ export function Layout() {
             </ul>
           </nav>
 
-          <div className="p-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
-            <HealthIndicator />
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800">
             <ThemeToggle />
           </div>
         </div>

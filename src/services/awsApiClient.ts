@@ -1,6 +1,5 @@
 import type {
   ApiResponse,
-  HealthCheckResponse,
   EC2CalculateRequest,
   EC2CalculateResponse,
   RDSCalculateRequest,
@@ -77,14 +76,6 @@ class AWSApiClient {
         },
       };
     }
-  }
-
-  async healthCheck(): Promise<HealthCheckResponse> {
-    const headers: HeadersInit = {
-      ...(this.anonKey && { Authorization: `Bearer ${this.anonKey}` }),
-    };
-    const response = await fetch(`${this.baseURL}/api/v1/health`, { headers });
-    return await response.json();
   }
 
   async calculateEC2(request: EC2CalculateRequest): Promise<ApiResponse<EC2CalculateResponse>> {
