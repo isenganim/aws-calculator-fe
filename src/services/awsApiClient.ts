@@ -16,16 +16,16 @@ import type {
   InstanceSearchResponse,
 } from '../types/api';
 
-const API_BASE_URL = import.meta.env.VITE_AWS_API_BASE_URL || 'http://localhost:3000';
-const API_KEY = import.meta.env.VITE_AWS_API_KEY || 'dev-api-key-12345';
+const API_BASE_URL = import.meta.env.VITE_AWS_API_BASE_URL || 'http://localhost:3001';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 class AWSApiClient {
   private baseURL: string;
-  private apiKey: string;
+  private anonKey: string;
 
   constructor() {
     this.baseURL = API_BASE_URL;
-    this.apiKey = API_KEY;
+    this.anonKey = SUPABASE_ANON_KEY;
   }
 
   private async request<T>(
@@ -36,7 +36,7 @@ class AWSApiClient {
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      'X-API-Key': this.apiKey,
+      ...(this.anonKey && { Authorization: `Bearer ${this.anonKey}` }),
       ...options.headers,
     };
 
@@ -80,7 +80,10 @@ class AWSApiClient {
   }
 
   async healthCheck(): Promise<HealthCheckResponse> {
-    const response = await fetch(`${this.baseURL}/api/v1/health`);
+    const headers: HeadersInit = {
+      ...(this.anonKey && { Authorization: `Bearer ${this.anonKey}` }),
+    };
+    const response = await fetch(`${this.baseURL}/api/v1/health`, { headers });
     return await response.json();
   }
 
